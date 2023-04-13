@@ -33,7 +33,7 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 for (Player player : getServer().getOnlinePlayers()) {
-                    boolean isEnabled = playerDataConfig.getBoolean("players." + player.getName(), true);
+                    boolean isEnabled = playerDataConfig.getBoolean("players." + player.getName(), false);
                     if (isEnabled) {
                         int timeSinceRest = player.getStatistic(Statistic.TIME_SINCE_REST);
                         if (timeSinceRest >= 24000) {
@@ -56,15 +56,15 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("piso")) {
+        if (cmd.getName().equalsIgnoreCase("phantomisolation")) {
             if (args.length == 0) {
-                sender.sendMessage(Component.text("Phantom spawning is currently " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "enabled" : "disabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.GREEN : NamedTextColor.RED));
+                sender.sendMessage(Component.text("PhantomIsolation is  " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "disabled" : "enabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.RED : NamedTextColor.GREEN));
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("true")) {
                     if (sender instanceof Player player) {
-                        playerDataConfig.set("players." + player.getName(), true);
+                        playerDataConfig.set("players." + player.getName(), false);
                         savePlayerData();
-                        player.sendMessage(Component.text("Phantom spawning enabled.", NamedTextColor.GREEN));
+                        player.sendMessage(Component.text("PhantomIsolation is disabled", NamedTextColor.RED));
                     } else {
                         sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
                     }
@@ -72,15 +72,15 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                     if (sender instanceof Player player) {
                         playerDataConfig.set("players." + player.getName(), false);
                         savePlayerData();
-                        player.sendMessage(Component.text("Phantom spawning disabled.", NamedTextColor.RED));
+                        player.sendMessage(Component.text("PhantomIsolation is enabled", NamedTextColor.GREEN));
                     } else {
                         sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
                     }
                 } else {
-                    sender.sendMessage(Component.text("Invalid argument. Usage: /piso true|false", NamedTextColor.RED));
+                    sender.sendMessage(Component.text("Invalid argument. Usage: /phantomisolation enabled|disabled", NamedTextColor.RED));
                 }
             } else {
-                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /piso [true|false]", NamedTextColor.RED));
+                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /phantomisolation [enabled|disabled]", NamedTextColor.RED));
             }
             return true;
         }
