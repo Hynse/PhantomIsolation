@@ -1,5 +1,6 @@
 package xyz.hynse.phantomisolation;
 
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Statistic;
@@ -9,11 +10,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class PhantomIsolation extends JavaPlugin implements Listener {
 
@@ -28,10 +29,10 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
 
         // Register events and run tasks
         getServer().getPluginManager().registerEvents(this, this);
+        AsyncScheduler scheduler = getServer().getAsyncScheduler();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
+            // Schedule the task with the AsyncScheduler
+            scheduler.runAtFixedRate(this, task -> {
                 for (Player player : getServer().getOnlinePlayers()) {
                     boolean isEnabled = playerDataConfig.getBoolean("players." + player.getName(), false);
                     if (isEnabled) {
@@ -40,12 +41,11 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                             player.setStatistic(Statistic.TIME_SINCE_REST, 0);
                         }
                     } else {
-                        player.setStatistic(Statistic.TIME_SINCE_REST, 0);
+                        player.setStatistic(Statistic.TIME_SINCE_REST, 1);
                     }
                 }
-            }
-        }.runTaskTimerAsynchronously(this, 0, 20);
-    }
+            }, 300, 20, TimeUnit.SECONDS);
+        }
 
     @Override
     public void onDisable() {
@@ -58,9 +58,9 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("phantomisolation")) {
             if (args.length == 0) {
-                sender.sendMessage(Component.text("PhantomIsolation is  " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "disabled" : "enabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.RED : NamedTextColor.GREEN));
+                sender.sendMessage(Component.text("PhantomIsolation is " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "disabled" : "enabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.RED : NamedTextColor.GREEN));
             } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("true")) {
+                if (args[0].equalsIgnoreCase("disable")) {
                     if (sender instanceof Player player) {
                         playerDataConfig.set("players." + player.getName(), false);
                         savePlayerData();
@@ -68,7 +68,7 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                     } else {
                         sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
                     }
-                } else if (args[0].equalsIgnoreCase("false")) {
+                } else if (args[0].equalsIgnoreCase("enable")) {
                     if (sender instanceof Player player) {
                         playerDataConfig.set("players." + player.getName(), false);
                         savePlayerData();
@@ -77,10 +77,10 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                         sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
                     }
                 } else {
-                    sender.sendMessage(Component.text("Invalid argument. Usage: /phantomisolation enabled|disabled", NamedTextColor.RED));
+                    sender.sendMessage(Component.text("Invalid argument. Usage: /phantomisolation enable|disable", NamedTextColor.RED));
                 }
             } else {
-                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /phantomisolation [enabled|disabled]", NamedTextColor.RED));
+                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /phantomisolation [enable|disable]", NamedTextColor.RED));
             }
             return true;
         }
