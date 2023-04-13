@@ -34,7 +34,7 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
             // Schedule the task with the AsyncScheduler
             scheduler.runAtFixedRate(this, task -> {
                 for (Player player : getServer().getOnlinePlayers()) {
-                    boolean isEnabled = playerDataConfig.getBoolean("players." + player.getName(), false);
+                    boolean isEnabled = playerDataConfig.getBoolean("players." + player.getName(), true);
                     if (isEnabled) {
                         int timeSinceRest = player.getStatistic(Statistic.TIME_SINCE_REST);
                         if (timeSinceRest >= 24000) {
@@ -58,7 +58,7 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("phantomisolation")) {
             if (args.length == 0) {
-                sender.sendMessage(Component.text("PhantomIsolation is " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "disabled" : "enabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.RED : NamedTextColor.GREEN));
+                sender.sendMessage(Component.text("PhantomIsolation is " + (playerDataConfig.getBoolean("players." + sender.getName(), true) ? "enabled" : "disabled") + ".", playerDataConfig.getBoolean("players." + sender.getName(), true) ? NamedTextColor.GREEN : NamedTextColor.RED));
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("disable")) {
                     if (sender instanceof Player player) {
@@ -70,21 +70,21 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                     }
                 } else if (args[0].equalsIgnoreCase("enable")) {
                     if (sender instanceof Player player) {
-                        playerDataConfig.set("players." + player.getName(), false);
+                        playerDataConfig.set("players." + player.getName(), true);
                         savePlayerData();
                         player.sendMessage(Component.text("PhantomIsolation is enabled", NamedTextColor.GREEN));
                     } else {
                         sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED));
                     }
                 } else {
-                    sender.sendMessage(Component.text("Invalid argument. Usage: /phantomisolation enable|disable", NamedTextColor.RED));
+                    sender.sendMessage(Component.text("Invalid argument. Usage: /phantomisolation <enable/disable>", NamedTextColor.RED));
                 }
             } else {
-                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /phantomisolation [enable|disable]", NamedTextColor.RED));
+                sender.sendMessage(Component.text("Invalid number of arguments. Usage: /phantomisolation <enable/disable>", NamedTextColor.RED));
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 
