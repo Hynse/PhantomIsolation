@@ -1,6 +1,6 @@
 # PhantomIsolation
 
-PhantomIsolation is a Minecraft plugin that allows players to using commands to disabled phantom spawm for themself
+PhantomIsolation is a Minecraft plugin that allows players to using commands to disabled phantom spawm for themself (folia only)
 
 ## Using
 `/phantomisolation` check status
