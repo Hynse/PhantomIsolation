@@ -1,0 +1,8 @@
+name: PhantomIsolation
+version: '${version}'
+main: xyz.hynse.phantomisolation.PhantomIsolation
+api-version: 1.19
+folia-supported: true
+commands:
+  phantomisolation:
+    description: Enable or disable phantom spawning for the sender
