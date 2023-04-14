@@ -33,5 +33,5 @@ jobs:
         registry: docker.pkg.github.com
         repository: ${{ github.repository }}
         tag: ${{ github.sha }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.HYNSE_TOKEN }}
         packages: "jar=build/libs/*.jar"
