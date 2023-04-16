@@ -41,7 +41,7 @@ public class PhantomIsolation extends JavaPlugin implements Listener {
                             player.setStatistic(Statistic.TIME_SINCE_REST, 0);
                         }
                     } else {
-                        player.setStatistic(Statistic.TIME_SINCE_REST, 1);
+                        getLogger().info(player.getName() + " will get phontom spawn.");
                     }
                 }
             }, 300, 20, TimeUnit.SECONDS);
